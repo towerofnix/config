@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# florrie's stupid login-or-not execute commands
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+stty -ixon
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+export DEVKITPRO="$HOME/devkitpro"
+export DEVKITARM=${DEVKITARM}/devkitARM
+
+export PATH="$HOME/.yarn/bin:$PATH"
+export EDITOR='vim'
+export PULSE_LATENCY_MSEC=50
+
+alias tmux="TERM=screen-256color-bce tmux"
+alias open=xdg-open
+youtube() {
+  mpv "https://youtube.com/watch?v=$1"
+}
+lsdate() {
+  for x in $(ls -tr -1 *.kra); do
+    echo "$x $(date -r "$x" "+%m %d %Y")";
+  done | less +G
+}
+
+xkbset ma 50 20 20 20 300
+
+echo "Don't forget to feed your botany plant! :) And maybe check FR."
